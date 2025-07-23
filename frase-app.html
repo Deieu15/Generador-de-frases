@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Frases</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: #fff;
+        }
+        #previewCanvas {
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        .input-box {
+            margin: 10px 0;
+            width: 100%;
+            max-width: 500px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Generador de Frases</h2>
+
+    <div class="input-box">
+        <label for="frase">Frase:</label>
+        <textarea id="frase" rows="3">“Siempre estoy buscando algo lejano”.</textarea>
+    </div>
+    <div class="input-box">
+        <label for="autor">Autor:</label>
+        <input type="text" id="autor" value="Uranus 2324.">
+    </div>
+
+    <button onclick="generarImagen()">Generar imagen</button>
+    <br>
+    <canvas id="previewCanvas" width="800" height="600"></canvas>
+    <br>
+    <button onclick="descargarImagen()">Descargar imagen</button>
+
+    <script>
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const logo = new Image();
+        logo.src = 'logo.png';
+
+        function generarImagen() {
+            const frase = document.getElementById('frase').value;
+            const autor = document.getElementById('autor').value;
+
+            // Limpiar
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Frase
+            ctx.fillStyle = "#000000";
+            ctx.font = "30px Georgia";
+            ctx.textAlign = "center";
+            const lineas = wrapText(ctx, frase, canvas.width - 100);
+            for (let i = 0; i < lineas.length; i++) {
+                ctx.fillText(lineas[i], canvas.width / 2, 200 + i * 40);
+            }
+
+            // Autor
+            ctx.font = "24px Georgia";
+            ctx.fillStyle = "#777777";
+            ctx.fillText(autor, canvas.width / 2, 300 + lineas.length * 40);
+
+            // Logo
+            logo.onload = () => {
+                ctx.drawImage(logo, canvas.width - 120, canvas.height - 100, 100, 80);
+            };
+            if (logo.complete) {
+                ctx.drawImage(logo, canvas.width - 120, canvas.height - 100, 100, 80);
+            }
+        }
+
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            let lines = [];
+            let line = '';
+            for (let i = 0; i < words.length; i++) {
+                let testLine = line + words[i] + ' ';
+                let metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && i > 0) {
+                    lines.push(line.trim());
+                    line = words[i] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
+            lines.push(line.trim());
+            return lines;
+        }
+
+        function descargarImagen() {
+            const link = document.createElement('a');
+            link.download = 'frase.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        generarImagen(); // Generar vista previa al cargar
+    </script>
+</body>
+</html>
