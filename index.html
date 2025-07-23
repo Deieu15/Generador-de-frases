@@ -87,12 +87,12 @@
             ctx.fillStyle = "#777777";
             ctx.fillText(autor, canvas.width / 2, 300 + lineas.length * 40);
 
-            // Logo
+            // Logo más grande y proporcionado
             logo.onload = () => {
-                ctx.drawImage(logo, canvas.width - 120, canvas.height - 100, 100, 80);
+                ctx.drawImage(logo, canvas.width - 180, canvas.height - 120, 150, 100);
             };
             if (logo.complete) {
-                ctx.drawImage(logo, canvas.width - 120, canvas.height - 100, 100, 80);
+                ctx.drawImage(logo, canvas.width - 180, canvas.height - 120, 150, 100);
             }
         }
 
